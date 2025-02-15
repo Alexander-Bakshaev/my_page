@@ -16,20 +16,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from horoscope import views
+from week_days import views as views_todo_week
+from horoscope import views as views_horoscope
 
 urlpatterns = [
     path('horoscope/admin/', admin.site.urls),
-    path('horoscope/aries/', views.aries),
-    path('horoscope/taurus/', views.taurus),
-    path('horoscope/gemini/', views.gemini),
-    path('horoscope/cancer/', views.cancer),
-    path('horoscope/leo/', views.leo),
-    path('horoscope/virgo/', views.virgo),
-    path('horoscope/libra/', views.libra),
-    path('horoscope/scorpio/', views.scorpio),
-    path('horoscope/sagittarius/', views.sagittarius),
-    path('horoscope/capricorn/', views.capricorn),
-    path('horoscope/aquarius/', views.aquarius),
-    path('horoscope/pisces/', views.pisces),
+    path('horoscope/aries/', views_horoscope.aries),
+    path('horoscope/taurus/', views_horoscope.taurus),
+    path('horoscope/gemini/', views_horoscope.gemini),
+    path('horoscope/cancer/', views_horoscope.cancer),
+    path('horoscope/leo/', views_horoscope.leo),
+    path('horoscope/virgo/', views_horoscope.virgo),
+    path('horoscope/libra/', views_horoscope.libra),
+    path('horoscope/scorpio/', views_horoscope.scorpio),
+    path('horoscope/sagittarius/', views_horoscope.sagittarius),
+    path('horoscope/capricorn/', views_horoscope.capricorn),
+    path('horoscope/aquarius/', views_horoscope.aquarius),
+    path('horoscope/pisces/', views_horoscope.pisces),
+    path('todo_week/mondev', views_todo_week.monday),
+    path('todo_week/tuesday', views_todo_week.tuesday),
 ]
