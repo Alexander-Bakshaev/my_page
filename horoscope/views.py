@@ -16,8 +16,19 @@ zodiac = {
 }
 
 
-def get_zodiac_sign_info(request, zodiac_sign):
-    if zodiac_sign in zodiac:
-        return HttpResponse(zodiac[zodiac_sign][1])
+def get_zodiac_sign_info(request, zodiac_sign: str) -> HttpResponse:
+    result = zodiac.get(zodiac_sign, None)
+    if result is None:
+        return HttpResponseNotFound(f"Знака зодиака '{zodiac_sign}' не существует.")
+    return HttpResponse(f"{result[0]} - {result[1]}")
+
+
+def get_zodiac_sign_info_by_number(request, zodiac_sign: int) -> HttpResponse:
+    if zodiac_sign in range(1, 13):
+        sign_name = list(zodiac.keys())[zodiac_sign - 1]
+        sign_info = zodiac.get(sign_name, None)
+        if sign_info is None:
+            return HttpResponseNotFound(f"{zodiac_sign} такого знака зодиака не существует")
+        return HttpResponse(f"{sign_info[0]} - {sign_info[1]}")
     else:
         return HttpResponseNotFound(f"{zodiac_sign} такого знака зодиака не существует")
