@@ -1,4 +1,3 @@
-
 from django.http import HttpResponse, HttpResponseNotFound
 
 zodiac = {
@@ -18,7 +17,6 @@ zodiac = {
 
 
 def get_zodiac_sign_info(request, zodiac_sign):
-
     if zodiac_sign in zodiac:
         return HttpResponse(zodiac[zodiac_sign][1])
     else:
