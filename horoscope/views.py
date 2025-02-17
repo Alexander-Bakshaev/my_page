@@ -24,45 +24,25 @@ elements = {
 }
 
 
-def index(request) -> HttpResponse:
-    zodiacs = list(zodiac.keys())
-    li_elements = ''
-    for sign in zodiacs:
-        redirect_path = reverse("horoscope_name", args=(sign,))
-        li_elements += f"<li><a href='{redirect_path}'>{sign.title()}</a></li>"
-    response = f"""
-    <ul>
-        {li_elements}
-    </ul>
-    """
-    return HttpResponse(response)
+def get_html_list(by, revers_name):
+    bata = ''.join(f'<li><a href="{reverse(revers_name, args=[s])}">{s.title()}</a></li>' for s in by)
+    result = f'<h2><ul>{bata}</ul></h2>'
+    return result
 
-def type_sign(request) -> HttpResponse:
-    type_zodiac = list(elements.keys())
-    li_elements = ''
-    for sign in type_zodiac:
-        redirect_path = reverse("horoscope_name", args=(sign,))
-        li_elements += f"<li><a href='{redirect_path}'>{sign.title()}</a></li>"
-    response = f"""
-    <ul>
-        {li_elements}
-    </ul>
-    """
-    return HttpResponse(response)
+
+def index(request) -> HttpResponse:
+    return HttpResponse(get_html_list(zodiac.keys(), 'horoscope_name'))
+
 
 def get_elements(request) -> HttpResponse:
-    li_elements = ''
-    for element in elements:
-        li_elements += f"<li><a href='{element}'>{element.title()}</a></li>"
-    return HttpResponse(f"<ul>{li_elements}</ul>")
+    return HttpResponse(get_html_list(elements.keys(), 'element'))
 
 
 def get_tipe_elements(request, element: str) -> HttpResponse:
-    li_elements = ''
-    for sign in elements[element]:
-        redirect_path = reverse("horoscope_name", args=(sign,))
-        li_elements += f"<li><a href='{redirect_path}'>{sign.title()}</a></li>"
-    return HttpResponse(f"<ul>{li_elements}</ul>")
+    result = elements.get(element, None)
+    if result is None:
+        return HttpResponseNotFound(f"Элемента '{element}' не существует.")
+    return HttpResponse(get_html_list(result, 'horoscope_name'))
 
 
 def get_zodiac_sign_info(request, zodiac_sign: str) -> HttpResponse:
