@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 
 zodiac = {
     'aries': ["♈", "Овен - первый знак зодиака, планета Марс (с 21 марта по 20 апреля)."],
@@ -24,11 +24,8 @@ def get_zodiac_sign_info(request, zodiac_sign: str) -> HttpResponse:
 
 
 def get_zodiac_sign_info_by_number(request, zodiac_sign: int) -> HttpResponse:
-    if zodiac_sign in range(1, 13):
+    if 1 <= zodiac_sign <= 12:
         sign_name = list(zodiac.keys())[zodiac_sign - 1]
-        sign_info = zodiac.get(sign_name, None)
-        if sign_info is None:
-            return HttpResponseNotFound(f"{zodiac_sign} такого знака зодиака не существует")
-        return HttpResponse(f"{sign_info[0]} - {sign_info[1]}")
+        return HttpResponseRedirect(f"/horoscope/{sign_name}")
     else:
         return HttpResponseNotFound(f"{zodiac_sign} такого знака зодиака не существует")
