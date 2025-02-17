@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.urls import reverse
 
 week_days = {'monday': 'в понедельник я жалею себя',
              'tuesday': 'во вторник - глазею в пропасть',
@@ -22,6 +23,7 @@ def get_week_day_info(request, week_day):
 def get_week_day_info_by_number(request, week_day):
     if 1 <= int(week_day) <= 7:
         day_info = list(week_days.keys())[week_day - 1]
-        return HttpResponseRedirect(f"/week_days/{day_info}")
+        redirect_url = reverse("week_days_name", args=(day_info,))
+        return HttpResponseRedirect(redirect_url)
     else:
         return HttpResponseNotFound(f"{week_day} такого дня недели не существует")
