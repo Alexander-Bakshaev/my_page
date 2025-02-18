@@ -3,15 +3,17 @@ from django.urls import reverse
 from enum import Enum
 from datetime import datetime
 
+
 # Определяем класс для знаков зодиака
 class ZodiacSign:
-    def __init__(self, name: str, symbol: str, description: str, element: 'Element', start_date: tuple, end_date: tuple):
+    def __init__(self, name: str, symbol: str, description: str, element: 'Element', start_date: tuple,
+                 end_date: tuple):
         self.name = name
         self.symbol = symbol
         self.description = description
         self.element = element
         self.start_date = start_date  # (месяц, день)
-        self.end_date = end_date      # (месяц, день)
+        self.end_date = end_date  # (месяц, день)
 
     def __str__(self):
         return f"{self.symbol} - {self.description}"
@@ -54,7 +56,8 @@ zodiac_signs = [
     ZodiacSign("scorpio", "♏", "Скорпион - восьмой знак зодиака, планета Марс.", Element.WATER, (10, 23), (11, 21)),
     ZodiacSign("sagittarius", "♐", "Стрелец - девятый знак зодиака, планета Юпитер.", Element.FIRE, (11, 22), (12, 21)),
     ZodiacSign("capricorn", "♑", "Козерог - десятый знак зодиака, планета Сатурн.", Element.EARTH, (12, 22), (1, 19)),
-    ZodiacSign("aquarius", "♒", "Водолей - одиннадцатый знак зодиака, планеты Уран и Сатурн.", Element.AIR, (1, 20), (2, 18)),
+    ZodiacSign("aquarius", "♒", "Водолей - одиннадцатый знак зодиака, планеты Уран и Сатурн.", Element.AIR, (1, 20),
+               (2, 18)),
     ZodiacSign("pisces", "♓", "Рыбы - двенадцатый знак зодиака, планеты Юпитер.", Element.WATER, (2, 19), (3, 20)),
 ]
 
@@ -106,12 +109,30 @@ def get_tipe_elements(request, element: str) -> HttpResponse:
         return HttpResponseNotFound(f"Элемента '{element}' не существует.")
 
 
+def get_yyyy_converters(request, zodiac_sign: int) -> HttpResponse:
+    return HttpResponse(f"Вы передали число из четырех цифр: {zodiac_sign}")
+
+
+def get_my_float_converters(request, zodiac_sign: int) -> HttpResponse:
+    return HttpResponse(f"Вы передали вещественное число: {zodiac_sign}")
+
+
+def get_my_date_converters(request, zodiac_sign: int) -> HttpResponse:
+    return HttpResponse(f"Вы передали дату: {zodiac_sign}")
+
+def get_split_converters(request, zodiac_sign: int) -> HttpResponse:
+    return HttpResponse(f"Вы передали строку: {zodiac_sign}")
+
+# def get_upper_converters(request, zodiac_sign: int) -> HttpResponse:
+#     return HttpResponse(f"Вы передали строку: {zodiac_sign.upper()}")
+
 # Информация о знаке зодиака по имени
 def get_zodiac_sign_info(request, zodiac_sign: str) -> HttpResponse:
     sign = next((s for s in zodiac_signs if s.name == zodiac_sign), None)
     if sign is None:
         return HttpResponseNotFound(f"Знака зодиака '{zodiac_sign}' не существует.")
-    return HttpResponse(f"<h1>{sign}</h1><p>Период: {sign.start_date[0]}.{sign.start_date[1]} - {sign.end_date[0]}.{sign.end_date[1]}</p>")
+    return HttpResponse(
+        f"<h1>{sign}</h1><p>Период: {sign.start_date[0]}.{sign.start_date[1]} - {sign.end_date[0]}.{sign.end_date[1]}</p>")
 
 
 # Информация о знаке зодиака по номеру
