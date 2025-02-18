@@ -7,4 +7,5 @@ urlpatterns = [
     path('type/<str:element>', views_horoscope.get_tipe_elements, name='element'),
     path('<int:zodiac_sign>', views_horoscope.get_zodiac_sign_info_by_number),
     path('<str:zodiac_sign>', views_horoscope.get_zodiac_sign_info, name='horoscope_name'),
+    path('<int:month>/<int:day>/', views_horoscope.get_zodiac_by_date, name='zodiac_by_date'),
 ]

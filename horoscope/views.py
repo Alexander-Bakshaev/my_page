@@ -1,61 +1,148 @@
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.urls import reverse
+from enum import Enum
+from datetime import datetime
 
-zodiac = {
-    'aries': ["♈", "Овен - первый знак зодиака, планета Марс (с 21 марта по 20 апреля)."],
-    'taurus': ["♉", "Телец - второй знак зодиака, планета Венера (с 21 апреля по 21 мая)."],
-    'gemini': ["♊", "Близнецы - третий знак зодиака, планета Меркурий (с 22 мая по 21 июня)."],
-    'cancer': ["♋", "Рак - четвёртый знак зодиака, Луна (с 22 июня по 22 июля)."],
-    'leo': ["♌", "Лев - пятый знак зодиака, солнце (с 23 июля по 21 августа)."],
-    'virgo': ["♍", "Дева - шестой знак зодиака, планета Меркурий (с 22 августа по 23 сентября)."],
-    'libra': ["♎", "Весы - седьмой знак зодиака, планета Венера (с 24 сентября по 23 октября)."],
-    'scorpio': ["♏", "Скорпион - восьмой знак зодиака, планета Марс (с 24 октября по 22 ноября)."],
-    'sagittarius': ["♐", "Стрелец - девятый знак зодиака, планета Юпитер (с 23 ноября по 22 декабря)."],
-    'capricorn': ["♑", "Козерог - десятый знак зодиака, планета Сатурн (с 23 декабря по 20 января)."],
-    'aquarius': ["♒", "Водолей - одиннадцатый знак зодиака, планеты Уран и Сатурн (с 21 января по 19 февраля)."],
-    'pisces': ["♓", "Рыбы - двенадцатый знак зодиака, планеты Юпитер (с 20 февраля по 20 марта)."]
-}
+# Определяем класс для знаков зодиака
+class ZodiacSign:
+    def __init__(self, name: str, symbol: str, description: str, element: 'Element', start_date: tuple, end_date: tuple):
+        self.name = name
+        self.symbol = symbol
+        self.description = description
+        self.element = element
+        self.start_date = start_date  # (месяц, день)
+        self.end_date = end_date      # (месяц, день)
 
-elements = {
-    'fire': ['aries', 'leo', 'sagittarius'],
-    'earth': ['taurus', 'virgo', 'capricorn'],
-    'air': ['gemini', 'libra', 'aquarius'],
-    'water': ['cancer', 'pisces', 'scorpio']
-}
+    def __str__(self):
+        return f"{self.symbol} - {self.description}"
+
+    def is_in_range(self, month: int, day: int) -> bool:
+        """
+        Проверяет, находится ли дата (month, day) в диапазоне этого знака зодиака.
+
+        :param month: Номер месяца (1-12).
+        :param day: Номер дня (1-31).
+        :return: True, если дата попадает в диапазон, иначе False.
+        """
+        input_date = datetime(year=2000, month=month, day=day)
+        start_date = datetime(year=2000, month=self.start_date[0], day=self.start_date[1])
+        end_date = datetime(year=2000, month=self.end_date[0], day=self.end_date[1])
+
+        if start_date > end_date:
+            return input_date >= start_date or input_date <= end_date
+        else:
+            return start_date <= input_date <= end_date
 
 
-def get_html_list(by, revers_name):
-    bata = ''.join(f'<li><a href="{reverse(revers_name, args=[s])}">{s.title()}</a></li>' for s in by)
+# Определяем Enum для элементов
+class Element(Enum):
+    FIRE = "fire"
+    EARTH = "earth"
+    AIR = "air"
+    WATER = "water"
+
+
+# Создаем список знаков зодиака
+zodiac_signs = [
+    ZodiacSign("aries", "♈", "Овен - первый знак зодиака, планета Марс.", Element.FIRE, (3, 21), (4, 19)),
+    ZodiacSign("taurus", "♉", "Телец - второй знак зодиака, планета Венера.", Element.EARTH, (4, 20), (5, 20)),
+    ZodiacSign("gemini", "♊", "Близнецы - третий знак зодиака, планета Меркурий.", Element.AIR, (5, 21), (6, 20)),
+    ZodiacSign("cancer", "♋", "Рак - четвёртый знак зодиака, Луна.", Element.WATER, (6, 21), (7, 22)),
+    ZodiacSign("leo", "♌", "Лев - пятый знак зодиака, солнце.", Element.FIRE, (7, 23), (8, 22)),
+    ZodiacSign("virgo", "♍", "Дева - шестой знак зодиака, планета Меркурий.", Element.EARTH, (8, 23), (9, 22)),
+    ZodiacSign("libra", "♎", "Весы - седьмой знак зодиака, планета Венера.", Element.AIR, (9, 23), (10, 22)),
+    ZodiacSign("scorpio", "♏", "Скорпион - восьмой знак зодиака, планета Марс.", Element.WATER, (10, 23), (11, 21)),
+    ZodiacSign("sagittarius", "♐", "Стрелец - девятый знак зодиака, планета Юпитер.", Element.FIRE, (11, 22), (12, 21)),
+    ZodiacSign("capricorn", "♑", "Козерог - десятый знак зодиака, планета Сатурн.", Element.EARTH, (12, 22), (1, 19)),
+    ZodiacSign("aquarius", "♒", "Водолей - одиннадцатый знак зодиака, планеты Уран и Сатурн.", Element.AIR, (1, 20), (2, 18)),
+    ZodiacSign("pisces", "♓", "Рыбы - двенадцатый знак зодиака, планеты Юпитер.", Element.WATER, (2, 19), (3, 20)),
+]
+
+
+# Функция для создания HTML-списка
+def generate_html_list(items, revers_name, item_name_attr=None):
+    """
+    Генерирует HTML-список из переданных элементов.
+
+    :param items: Список элементов (может быть список объектов или строк).
+    :param revers_name: Имя URL-маршрута для генерации ссылок.
+    :param item_name_attr: Атрибут объекта, который содержит название элемента (если None, используется сам элемент).
+    :return: HTML-строка с ul-списком.
+    """
+    if item_name_attr:
+        bata = ''.join(
+            f'<li><a href="{reverse(revers_name, args=[getattr(item, item_name_attr)])}">{getattr(item, item_name_attr).title()}</a></li>'
+            for item in items
+        )
+    else:
+        bata = ''.join(
+            f'<li><a href="{reverse(revers_name, args=[item])}">{item.title()}</a></li>'
+            for item in items
+        )
     result = f'<h2><ul>{bata}</ul></h2>'
     return result
 
 
+# Главная страница
 def index(request) -> HttpResponse:
-    return HttpResponse(get_html_list(zodiac.keys(), 'horoscope_name'))
+    return HttpResponse(generate_html_list(zodiac_signs, 'horoscope_name', item_name_attr='name'))
 
 
+# Страница со списком элементов
 def get_elements(request) -> HttpResponse:
-    return HttpResponse(get_html_list(elements.keys(), 'element'))
+    elements_list = [e.value for e in Element]
+    return HttpResponse(generate_html_list(elements_list, 'element'))
 
 
+# Страница с знаками зодиака по элементу
 def get_tipe_elements(request, element: str) -> HttpResponse:
-    result = elements.get(element, None)
-    if result is None:
+    try:
+        selected_element = Element[element.upper()]
+        signs_by_element = [sign for sign in zodiac_signs if sign.element == selected_element]
+        if not signs_by_element:
+            return HttpResponseNotFound(f"Элемента '{element}' не существует.")
+        return HttpResponse(generate_html_list(signs_by_element, 'horoscope_name', item_name_attr='name'))
+    except KeyError:
         return HttpResponseNotFound(f"Элемента '{element}' не существует.")
-    return HttpResponse(get_html_list(result, 'horoscope_name'))
 
 
+# Информация о знаке зодиака по имени
 def get_zodiac_sign_info(request, zodiac_sign: str) -> HttpResponse:
-    result = zodiac.get(zodiac_sign, None)
-    if result is None:
+    sign = next((s for s in zodiac_signs if s.name == zodiac_sign), None)
+    if sign is None:
         return HttpResponseNotFound(f"Знака зодиака '{zodiac_sign}' не существует.")
-    return HttpResponse(f"{result[0]} - {result[1]}")
+    return HttpResponse(f"<h1>{sign}</h1><p>Период: {sign.start_date[0]}.{sign.start_date[1]} - {sign.end_date[0]}.{sign.end_date[1]}</p>")
 
 
+# Информация о знаке зодиака по номеру
 def get_zodiac_sign_info_by_number(request, zodiac_sign: int) -> HttpResponse:
-    if 1 <= zodiac_sign <= len(zodiac):
-        sign_name = list(zodiac.keys())[zodiac_sign - 1]
-        redirect_url = reverse("horoscope_name", args=(sign_name,))
+    if 1 <= zodiac_sign <= len(zodiac_signs):
+        sign = zodiac_signs[zodiac_sign - 1]
+        redirect_url = reverse("horoscope_name", args=(sign.name,))
         return HttpResponseRedirect(redirect_url)
     else:
         return HttpResponseNotFound(f"{zodiac_sign} такого знака зодиака не существует")
+
+
+# Определение знака зодиака по дате
+def get_zodiac_by_date(request, month: int, day: int) -> HttpResponse:
+    # Проверка корректности месяца
+    if not (1 <= month <= 12):
+        return HttpResponseNotFound(f"Неверный номер месяца: {month}")
+
+    # Проверка корректности дня
+    days_in_month = {
+        1: 31, 2: 29, 3: 31, 4: 30, 5: 31, 6: 30,
+        7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31
+    }
+    if not (1 <= day <= days_in_month.get(month, 0)):
+        return HttpResponseNotFound(f"Неверный день для месяца {month}: {day}")
+
+    # Находим подходящий знак зодиака
+    for sign in zodiac_signs:
+        if sign.is_in_range(month, day):
+            redirect_url = reverse("horoscope_name", args=(sign.name,))
+            return HttpResponseRedirect(redirect_url)
+
+    # Если дата не найдена (что маловероятно), возвращаем ошибку
+    return HttpResponseNotFound(f"Не удалось определить знак зодиака для {month}/{day}")
