@@ -12,6 +12,10 @@ week_days = {'monday': 'в понедельник я жалею себя',
              }
 
 
+def greeting(request):
+    return render(request, 'week_days/greeting.html')
+
+
 def get_week_day_info(request, week_day):
     info = week_days.get(week_day, None)
     if info:

@@ -1,4 +1,5 @@
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse
 from enum import Enum
 from datetime import datetime
@@ -125,10 +126,9 @@ def get_split_converters(request, zodiac_sign: int) -> HttpResponse:
 
 def get_zodiac_sign_info(request, zodiac_sign: str) -> HttpResponse:
     # sign = next((s for s in zodiac_signs if s.name == zodiac_sign), None)
-    response = render_to_string('horoscope/info_zodiac.html')
     # if sign is None:
     #     return HttpResponseNotFound(f"Знака зодиака '{zodiac_sign}' не существует.")
-    return HttpResponse(response)
+    return render(request, 'horoscope/info_zodiac.html')
 
         # HttpResponse(
         # f"<h1>{sign}</h1><p>Период: {sign.start_date[0]}.{sign.start_date[1]} - {sign.end_date[0]}.{sign.end_date[1]}</p>"))
