@@ -124,11 +124,18 @@ def get_my_date_converters(request, zodiac_sign: int) -> HttpResponse:
 def get_split_converters(request, zodiac_sign: int) -> HttpResponse:
     return HttpResponse(f"Вы передали строку: {zodiac_sign}")
 
+# Информация о знаке зодиака
 def get_zodiac_sign_info(request, zodiac_sign: str) -> HttpResponse:
     # sign = next((s for s in zodiac_signs if s.name == zodiac_sign), None)
     # if sign is None:
     #     return HttpResponseNotFound(f"Знака зодиака '{zodiac_sign}' не существует.")
-    return render(request, 'horoscope/info_zodiac.html')
+    description = next((s for s in zodiac_signs if s.name == zodiac_sign), None)
+    data = {
+        'description_zodiac' : description,
+        'element_zodiac' : description.element.name,
+        'zodiac_name': zodiac_sign.title(),
+    }
+    return render(request, 'horoscope/info_zodiac.html', context=data)
 
         # HttpResponse(
         # f"<h1>{sign}</h1><p>Период: {sign.start_date[0]}.{sign.start_date[1]} - {sign.end_date[0]}.{sign.end_date[1]}</p>"))
