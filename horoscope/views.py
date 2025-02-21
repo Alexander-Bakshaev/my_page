@@ -2,7 +2,7 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.urls import reverse
 from enum import Enum
 from datetime import datetime
-
+from django.template.loader import render_to_string
 
 # Определяем класс для знаков зодиака
 class ZodiacSign:
@@ -123,16 +123,15 @@ def get_my_date_converters(request, zodiac_sign: int) -> HttpResponse:
 def get_split_converters(request, zodiac_sign: int) -> HttpResponse:
     return HttpResponse(f"Вы передали строку: {zodiac_sign}")
 
-# def get_upper_converters(request, zodiac_sign: int) -> HttpResponse:
-#     return HttpResponse(f"Вы передали строку: {zodiac_sign.upper()}")
-
-# Информация о знаке зодиака по имени
 def get_zodiac_sign_info(request, zodiac_sign: str) -> HttpResponse:
-    sign = next((s for s in zodiac_signs if s.name == zodiac_sign), None)
-    if sign is None:
-        return HttpResponseNotFound(f"Знака зодиака '{zodiac_sign}' не существует.")
-    return HttpResponse(
-        f"<h1>{sign}</h1><p>Период: {sign.start_date[0]}.{sign.start_date[1]} - {sign.end_date[0]}.{sign.end_date[1]}</p>")
+    # sign = next((s for s in zodiac_signs if s.name == zodiac_sign), None)
+    response = render_to_string('horoscope/info_zodiac.html')
+    # if sign is None:
+    #     return HttpResponseNotFound(f"Знака зодиака '{zodiac_sign}' не существует.")
+    return HttpResponse(response)
+
+        # HttpResponse(
+        # f"<h1>{sign}</h1><p>Период: {sign.start_date[0]}.{sign.start_date[1]} - {sign.end_date[0]}.{sign.end_date[1]}</p>"))
 
 
 # Информация о знаке зодиака по номеру
