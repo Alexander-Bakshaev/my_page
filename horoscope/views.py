@@ -5,6 +5,7 @@ from enum import Enum
 from datetime import datetime
 from django.template.loader import render_to_string
 
+
 # Определяем класс для знаков зодиака
 class ZodiacSign:
     def __init__(self, name: str, symbol: str, description: str, element: 'Element', start_date: tuple,
@@ -89,7 +90,11 @@ def generate_html_list(items, revers_name, item_name_attr=None):
 
 # Главная страница
 def index(request) -> HttpResponse:
-    return HttpResponse(generate_html_list(zodiac_signs, 'horoscope_name', item_name_attr='name'))
+    zodiacs = [sign.name for sign in zodiac_signs]
+    context = {
+        'zodiacs': zodiacs
+    }
+    return render(request, 'horoscope/index.html', context=context)
 
 
 # Страница со списком элементов
@@ -121,8 +126,10 @@ def get_my_float_converters(request, zodiac_sign: int) -> HttpResponse:
 def get_my_date_converters(request, zodiac_sign: int) -> HttpResponse:
     return HttpResponse(f"Вы передали дату: {zodiac_sign}")
 
+
 def get_split_converters(request, zodiac_sign: int) -> HttpResponse:
     return HttpResponse(f"Вы передали строку: {zodiac_sign}")
+
 
 # Информация о знаке зодиака
 def get_zodiac_sign_info(request, zodiac_sign: str) -> HttpResponse:
@@ -131,11 +138,8 @@ def get_zodiac_sign_info(request, zodiac_sign: str) -> HttpResponse:
         'description_zodiac': description,
         'element_zodiac': description.element.name if description else 'Неизвестно',
         'zodiac_name': zodiac_sign,
-        }
+    }
     return render(request, 'horoscope/info_zodiac.html', context=data)
-
-        # HttpResponse(
-        # f"<h1>{sign}</h1><p>Период: {sign.start_date[0]}.{sign.start_date[1]} - {sign.end_date[0]}.{sign.end_date[1]}</p>"))
 
 
 # Информация о знаке зодиака по номеру
@@ -170,3 +174,4 @@ def get_zodiac_by_date(request, month: int, day: int) -> HttpResponse:
 
     # Если дата не найдена (что маловероятно), возвращаем ошибку
     return HttpResponseNotFound(f"Не удалось определить знак зодиака для {month}/{day}")
+

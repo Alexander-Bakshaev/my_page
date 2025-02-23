@@ -1,15 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Гороскоп для {{ zodiac_name|upper }}</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block css_additional %}
+    <link rel="stylesheet" href=" {% static 'horoscope/css/info.css' %} ">
+{% endblock %}
+
+
+{% block title %}
+    Гороскоп для {{ zodiac_name|title }}
+{% endblock %}
+
+
+
+{% block content %}
+
+    {% include 'includes/navbar.html' %}
+
     <h1>Приложение гороскоп</h1>
+    <h2>Гороскоп для {{ zodiac_name|title }}</h2>
     {% if description_zodiac == None %}
         <h2>Неправильный знак зодиака {{ zodiac_name }}</h2>
     {% endif %}
     <h2> {{ description_zodiac|default:"" }} </h2>
     <h2> Стихия: {{ element_zodiac|default:"" }} </h2>
-</body>
-</html>
+
+{% endblock %}
+

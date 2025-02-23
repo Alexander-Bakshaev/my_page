@@ -31,3 +31,8 @@ def get_week_day_info_by_number(request, week_day):
         return HttpResponseRedirect(redirect_url)
     else:
         return HttpResponseNotFound(f"{week_day} такого дня недели не существует")
+
+
+# Позже удалить
+def get_beautiful_table(response):
+    return render(response, 'week_days/table.html', )
