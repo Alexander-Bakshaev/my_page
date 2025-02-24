@@ -23,6 +23,7 @@
         <h2>Неправильный знак зодиака {{ zodiac_name }}</h2>
     {% endif %}
     <h2> {{ description_zodiac|default:"" }} </h2>
+    <h2> Даты рождения: {{ date_range|default:"" }} </h2>
     <h2> Стихия: {{ element_zodiac|default:"" }} </h2>
 
 {% endblock %}

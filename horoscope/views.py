@@ -38,12 +38,19 @@ class ZodiacSign:
             return start_date <= input_date <= end_date
 
 
-# Определяем Enum для элементов
+# Определяем Enum для элементов с символами
 class Element(Enum):
-    FIRE = "fire"
-    EARTH = "earth"
-    AIR = "air"
-    WATER = "water"
+    FIRE = ("fire", "🔥")
+    EARTH = ("earth", "🌍")
+    AIR = ("air", "🌬️")
+    WATER = ("water", "🌊")
+
+    def __init__(self, value, symbol):
+        self._value_ = value
+        self.symbol = symbol
+
+    def __str__(self):
+        return f"{self.symbol} {self.value.capitalize()}"
 
 
 # Создаем список знаков зодиака
@@ -99,7 +106,7 @@ def index(request) -> HttpResponse:
 
 # Страница со списком элементов
 def get_elements(request) -> HttpResponse:
-    elements_list = [e.value for e in Element]
+    elements_list = [str(e) for e in Element]
     return HttpResponse(generate_html_list(elements_list, 'element'))
 
 
@@ -136,13 +143,34 @@ def get_zodiac_sign_info(request, zodiac_sign: str) -> HttpResponse:
     description = next((s for s in zodiac_signs if s.name == zodiac_sign), None)
     zodiacs = [sign.name for sign in zodiac_signs]
     dict_eng_rus_name = {sign.name: sign.description.split('-')[0] for sign in zodiac_signs}
+
+    # Форматируем даты для отображения
+    if description:
+        start_month = description.start_date[0]
+        start_day = description.start_date[1]
+        end_month = description.end_date[0]
+        end_day = description.end_date[1]
+
+        # Преобразуем номера месяцев в названия
+        month_names = [
+            "января", "февраля", "марта", "апреля", "мая", "июня",
+            "июля", "августа", "сентября", "октября", "ноября", "декабря"
+        ]
+
+        start_date_str = f"{start_day} {month_names[start_month - 1]}"
+        end_date_str = f"{end_day} {month_names[end_month - 1]}"
+        date_range = f"{start_date_str} - {end_date_str}"
+    else:
+        date_range = "Неизвестно"
+
     data = {
         'description_zodiac': description.description if description else 'Неизвестно',
-        'element_zodiac': description.element.name if description else 'Неизвестно',
+        'element_zodiac': str(description.element) if description else 'Неизвестно',
         'zodiac_name': description.element,
         'zodiac_symbol': description.symbol if description else '',
         'zodiacs': zodiacs,
         'dict_eng_rus_name': dict_eng_rus_name,
+        'date_range': date_range,  # Добавляем диапазон дат в контекст
     }
     return render(request, 'horoscope/info_zodiac.html', context=data)
 
@@ -179,4 +207,3 @@ def get_zodiac_by_date(request, month: int, day: int) -> HttpResponse:
 
     # Если дата не найдена (что маловероятно), возвращаем ошибку
     return HttpResponseNotFound(f"Не удалось определить знак зодиака для {month}/{day}")
-
