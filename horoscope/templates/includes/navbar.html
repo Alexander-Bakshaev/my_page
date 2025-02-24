@@ -1,7 +1,18 @@
+{% load my_filter %}
+
+{#<nav>#}
+{#    <a href="{% url 'horoscope_index' %}">Главная</a>#}
+{#    {% for zodiac in zodiacs %}#}
+{#        <a href="{% url 'horoscope_name' zodiac %}"> {{ zodiac|title }}</a>#}
+{#        {% endfor %}#}
+{#    <a href="https://ya.ru/">О сайте</a>#}
+{#</nav>#}
+
+
 <nav>
-    <a href="{% url 'horoscope_index' %}">Главная</a> |
+    <a href="{% url 'horoscope_index' %}">Главная</a>
+    {% for zodiac_eng, zodiac_rus in dict_eng_rus_name.items %}
+        <a href="{% url 'horoscope_name' zodiac_eng %}"> {{ zodiac_rus }}</a>
+    {% endfor %}
     <a href="https://ya.ru/">О сайте</a>
-    {% for zodiac in zodiacs %}
-        | <a href="{% url 'horoscope_name' zodiac %}"> {{ zodiac|title }}</a>
-        {% endfor %}
 </nav>

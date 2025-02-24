@@ -14,15 +14,14 @@
 
 {% block content %}
 
-    {% include 'includes/navbar.html' %}
-
+    <h1>Меню</h1>
     <ul>
         {% for zodiac in zodiacs %}
-            <li><h3><a href="{% url 'horoscope_name' zodiac %}"> {{ forloop.counter }} {{ zodiac|title }}</a></h3></li>
+            <li><a href="{% url 'horoscope_name' zodiac %}"> {{ zodiac|title }}</a></li>
         {% endfor %}
     </ul>
 
-    {% include 'includes/navbar.html' %}
+
 
 {% endblock %}
 

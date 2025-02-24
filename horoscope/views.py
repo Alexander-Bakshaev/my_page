@@ -134,10 +134,15 @@ def get_split_converters(request, zodiac_sign: int) -> HttpResponse:
 # Информация о знаке зодиака
 def get_zodiac_sign_info(request, zodiac_sign: str) -> HttpResponse:
     description = next((s for s in zodiac_signs if s.name == zodiac_sign), None)
+    zodiacs = [sign.name for sign in zodiac_signs]
+    dict_eng_rus_name = {sign.name: sign.description.split('-')[0] for sign in zodiac_signs}
     data = {
-        'description_zodiac': description,
+        'description_zodiac': description.description if description else 'Неизвестно',
         'element_zodiac': description.element.name if description else 'Неизвестно',
-        'zodiac_name': zodiac_sign,
+        'zodiac_name': description.element,
+        'zodiac_symbol': description.symbol if description else '',
+        'zodiacs': zodiacs,
+        'dict_eng_rus_name': dict_eng_rus_name,
     }
     return render(request, 'horoscope/info_zodiac.html', context=data)
 
